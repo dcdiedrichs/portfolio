@@ -10,9 +10,9 @@
       --bg: #f5f7fb;
       --bg2: #eef0f7;
       --bg3: #e2e6f0;
-      --accent: #0ea5a0;
-      --accent-light: rgba(14,165,160,0.1);
-      --accent-border: rgba(14,165,160,0.25);
+      --accent: #1a56db;
+      --accent-light: rgba(26,86,219,0.08);
+      --accent-border: rgba(26,86,219,0.2);
       --text: #1a2233;
       --muted: #6b7a94;
       --border: #dde2ed;
@@ -77,7 +77,7 @@
       position: absolute;
       top: -160px; right: -160px;
       width: 520px; height: 520px;
-      background: radial-gradient(circle, rgba(14,165,160,0.08) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(26,86,219,0.08) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -135,9 +135,9 @@
       font-size: 14px;
       text-decoration: none;
       transition: all 0.2s;
-      box-shadow: 0 4px 14px rgba(14,165,160,0.25);
+      box-shadow: 0 4px 14px rgba(26,86,219,0.25);
     }
-    .btn-primary:hover { background: #0c9490; transform: translateY(-1px); }
+    .btn-primary:hover { background: #1648c0; transform: translateY(-1px); }
     .btn-ghost {
       display: inline-flex;
       align-items: center;
@@ -278,7 +278,7 @@
       padding: 16px 18px;
       transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .skill-item:hover { border-color: var(--accent); box-shadow: 0 4px 12px rgba(14,165,160,0.08); }
+    .skill-item:hover { border-color: var(--accent); box-shadow: 0 4px 12px rgba(26,86,219,0.08); }
     .skill-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
     .skill-level { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); }
     .skill-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
@@ -310,7 +310,7 @@
       opacity: 0;
       transition: opacity 0.25s;
     }
-    .project-card:hover { border-color: var(--accent-border); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(14,165,160,0.1); }
+    .project-card:hover { border-color: var(--accent-border); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(26,86,219,0.1); }
     .project-card:hover::before { opacity: 1; }
 
     .project-num {
@@ -386,7 +386,7 @@
       color: var(--text);
       transition: all 0.2s;
     }
-    .contact-link:hover { border-color: var(--accent); transform: translateX(4px); box-shadow: 0 4px 16px rgba(14,165,160,0.1); }
+    .contact-link:hover { border-color: var(--accent); transform: translateX(4px); box-shadow: 0 4px 16px rgba(26,86,219,0.1); }
     .contact-link-icon {
       width: 40px; height: 40px;
       background: var(--bg2);
@@ -406,7 +406,7 @@
       border-radius: 18px;
       padding: 48px;
       text-align: center;
-      box-shadow: 0 8px 32px rgba(14,165,160,0.08);
+      box-shadow: 0 8px 32px rgba(26,86,219,0.08);
     }
     .cta-box h3 {
       font-family: 'Fraunces', serif;
@@ -429,9 +429,9 @@
       font-size: 15px;
       text-decoration: none;
       transition: all 0.2s;
-      box-shadow: 0 4px 14px rgba(14,165,160,0.25);
+      box-shadow: 0 4px 14px rgba(26,86,219,0.25);
     }
-    .cta-box a:hover { background: #0c9490; transform: translateY(-2px); }
+    .cta-box a:hover { background: #1648c0; transform: translateY(-2px); }
 
     /* FOOTER */
     footer {
@@ -485,6 +485,7 @@
     <a href="#sobre-mi">Sobre mí</a>
     <a href="#proyectos">Proyectos</a>
     <a href="#experiencia">Experiencia</a>
+    <a href="#formacion">Formación</a>
     <a href="#contacto">Contacto</a>
   </div>
 </nav>
@@ -533,7 +534,7 @@
     <span class="stack-pill hi">Copilot Studio</span>
     <span class="stack-pill">Python</span>
     <span class="stack-pill">Streamlit</span>
-    <span class="stack-pill">Ariba APIs</span>
+    <span class="stack-pill hi">Ariba APIs</span>
   </div>
 </div>
 
@@ -648,12 +649,73 @@
   <div class="section-tag">Experiencia</div>
   <h2 class="section-title">Trayectoria<br/><em style="font-style:italic;color:var(--accent)">profesional.</em></h2>
   <div class="exp-list">
+
     <div class="exp-item">
-      <div class="exp-years">2016 — 2024</div>
+      <div class="exp-years">Nov 2023 — Abr 2026</div>
       <div>
         <div class="exp-company">Cencosud</div>
-        <div class="exp-role">Procurement Manager</div>
-        <div class="exp-desc">Gestión estratégica de compras, licitaciones complejas y administración de contratos a escala. Lideré iniciativas de automatización de procesos e implementación de herramientas de analytics, incluyendo integración con SAP Ariba y desarrollo de dashboards en Power BI.</div>
+        <div class="exp-role">Jefe de Métricas · Governance Procurement Regional</div>
+        <div class="exp-desc">Responsable de la gobernanza de métricas y calidad de datos de Procurement a nivel regional (Chile, Argentina, Perú, Colombia y Brasil). Lideré la migración completa de reportería desde Excel a Power BI, implementé 11 controles automatizados sobre datos de SAP Ariba, automaticé la generación de 1.163 proyectos de Sourcing liberando más de 50 horas mensuales, e integré las APIs de SAP Ariba para flujos de datos automáticos. Participé en la creación de un agente de IA con Copilot Studio para el área.</div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-years">Feb 2019 — Oct 2023</div>
+      <div>
+        <div class="exp-company">Cencosud</div>
+        <div class="exp-role">Ingeniero Governance · Procurement Regional</div>
+        <div class="exp-desc">Automatización end-to-end del ciclo de contratos: diseñé un flujo que genera automáticamente documentos Word y crea Contract Workspaces en SAP Ariba mediante RPA, procesando 138 contratos y liberando más de 260 horas del equipo. Desarrollé entre 8 y 12 robots con Rocketbot y Power Automate, y construí el portal interno de Procurement en SharePoint.</div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-years">Nov 2021 — Actualidad</div>
+      <div>
+        <div class="exp-company">Pontificia Universidad Católica de Chile</div>
+        <div class="exp-role">Consultor Freelance · Automatización de Procesos</div>
+        <div class="exp-desc">Consultoría para la Dirección de Educación Continua UC en optimización y automatización de procesos administrativos, utilizando Zapier, Power Automate, RPA y Google Apps Script. Automaticé gestión de Zoom, generación masiva de informes, notificaciones a académicos y distribución de encuestas.</div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-years">Jul 2018 — Feb 2019</div>
+      <div>
+        <div class="exp-company">Cencosud</div>
+        <div class="exp-role">Comprador Regional de Sistemas · Procurement</div>
+        <div class="exp-desc">Gestión de compras de licencias de software y hardware a nivel regional, negociando con proveedores internacionales como Microsoft y Adobe. Primera exposición al proceso de compras end-to-end en SAP Ariba.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FORMACIÓN -->
+<section id="formacion">
+  <div class="section-tag">Formación</div>
+  <h2 class="section-title">Educación &<br/><em style="font-style:italic;color:var(--accent)">certificaciones.</em></h2>
+  <div class="exp-list">
+    <div class="exp-item">
+      <div class="exp-years">Titulado</div>
+      <div>
+        <div class="exp-company">Universidad Mayor</div>
+        <div class="exp-role">Ingeniería Comercial</div>
+        <div class="exp-desc">Santiago, Chile.</div>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-years">4 años cursados</div>
+      <div>
+        <div class="exp-company">Universidad Técnica Federico Santa María</div>
+        <div class="exp-role">Ingeniería Civil Telemática</div>
+        <div class="exp-desc">Valparaíso, Chile. Base técnica sólida en sistemas y telecomunicaciones.</div>
+      </div>
+    </div>
+    <div class="exp-item">
+      <div class="exp-years">En curso</div>
+      <div>
+        <div class="exp-company">Google · Coursera</div>
+        <div class="exp-role">Certificado Profesional de Análisis de Datos</div>
+        <div class="exp-desc">SQL, Python, Tableau, limpieza y visualización de datos. Finalización estimada julio 2026.</div>
       </div>
     </div>
   </div>
