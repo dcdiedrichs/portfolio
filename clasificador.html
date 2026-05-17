@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clasificador de Materiales con IA — Diego Diedrichs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;0,900;1,300&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --bg2: #eef0f7;
+      --bg3: #e2e6f0;
+      --accent: #1a56db;
+      --accent-light: rgba(26,86,219,0.08);
+      --accent-border: rgba(26,86,219,0.2);
+      --text: #1a2233;
+      --muted: #6b7a94;
+      --border: #dde2ed;
+      --card: #ffffff;
+      --nav: rgba(245,247,251,0.92);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 56px;
+      background: var(--nav);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      padding: 140px 80px 80px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .breadcrumb {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .breadcrumb a { color: var(--accent); text-decoration: none; }
+    .hero-tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      background: var(--accent-light);
+      border: 1px solid var(--accent-border);
+      padding: 5px 13px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      color: var(--text);
+    }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero-desc {
+      font-size: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 36px;
+      max-width: 680px;
+    }
+    .hero-desc strong { color: var(--text); font-weight: 500; }
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(26,86,219,0.25);
+    }
+    .btn-primary:hover { background: #1648c0; transform: translateY(-1px); }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 15px;
+      text-decoration: none;
+      background: var(--card);
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* SECTIONS */
+    .section { padding: 80px; max-width: 900px; margin: 0 auto; }
+    .section-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+    .divider { height: 1px; background: var(--border); max-width: 900px; margin: 0 auto; }
+
+    /* PROBLEMA */
+    .problema-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .problema-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: all 0.2s;
+    }
+    .problema-card:hover { border-color: var(--accent-border); box-shadow: 0 4px 16px rgba(26,86,219,0.08); }
+    .problema-icon { font-size: 28px; margin-bottom: 12px; }
+    .problema-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .problema-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* CÓMO FUNCIONA */
+    .steps-list { display: flex; flex-direction: column; gap: 0; margin-top: 32px; }
+    .step-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 24px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .step-item:last-child { border-bottom: none; }
+    .step-num {
+      width: 48px; height: 48px;
+      background: var(--accent-light);
+      border: 1.5px solid var(--accent-border);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .step-content h3 { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .step-content p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+    /* MÉTRICAS */
+    .metrics-section { background: var(--bg2); padding: 80px; }
+    .metrics-inner { max-width: 900px; margin: 0 auto; }
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .metric-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .metric-card:hover { border-color: var(--accent-border); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,86,219,0.08); }
+    .metric-num {
+      font-family: 'Fraunces', serif;
+      font-size: 52px;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .metric-label { font-size: 14px; color: var(--muted); line-height: 1.5; }
+    .metric-label strong { color: var(--text); display: block; font-size: 15px; margin-bottom: 4px; }
+
+    /* DEMO SCREEN */
+    .demo-section { background: var(--bg); }
+    .demo-screen {
+      background: #1a1d24;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-top: 32px;
+      box-shadow: 0 20px 60px rgba(26,34,51,0.15);
+    }
+    .demo-topbar {
+      background: #262730;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #3d3d4e;
+    }
+    .demo-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .demo-url {
+      flex: 1;
+      background: #1a1d24;
+      border-radius: 4px;
+      padding: 4px 12px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #888;
+      margin: 0 12px;
+    }
+    .demo-body {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 380px;
+    }
+    .demo-sidebar {
+      background: #262730;
+      padding: 20px 16px;
+      border-right: 1px solid #3d3d4e;
+    }
+    .demo-sidebar-title { font-family: 'DM Mono', monospace; font-size: 12px; color: #ff4b4b; font-weight: 600; margin-bottom: 20px; }
+    .demo-sidebar-label { font-size: 11px; color: #666; font-family: 'DM Mono', monospace; margin-bottom: 6px; margin-top: 16px; }
+    .demo-slider { height: 4px; background: #3d3d4e; border-radius: 2px; position: relative; margin-bottom: 4px; }
+    .demo-slider-fill { height: 100%; background: #ff4b4b; border-radius: 2px; width: 60%; }
+    .demo-slider-thumb { width: 12px; height: 12px; background: #ff4b4b; border-radius: 50%; position: absolute; top: -4px; left: 60%; transform: translateX(-50%); }
+    .demo-toggle-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+    .demo-toggle-label { font-size: 12px; color: #ccc; }
+    .demo-toggle { width: 28px; height: 16px; background: #ff4b4b; border-radius: 8px; }
+
+    .demo-main { padding: 20px 24px; }
+    .demo-title { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .demo-sub { font-size: 11px; color: #666; font-family: 'DM Mono', monospace; margin-bottom: 16px; }
+    .demo-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+    .demo-metric { background: #1a1d24; border: 1px solid #2d2d3a; border-radius: 8px; padding: 10px; }
+    .demo-metric-label { font-size: 10px; color: #666; font-family: 'DM Mono', monospace; margin-bottom: 4px; }
+    .demo-metric-val { font-size: 22px; font-weight: 700; color: #fff; }
+    .demo-metric-val.red { color: #ff4b4b; }
+    .demo-metric-val.green { color: #09ab3b; }
+    .demo-metric-val.yellow { color: #ffd16a; }
+    .demo-table { background: #1a1d24; border: 1px solid #2d2d3a; border-radius: 8px; overflow: hidden; }
+    .demo-table-header { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr; gap: 8px; padding: 8px 12px; background: #262730; }
+    .demo-table-header span { font-size: 10px; color: #666; font-family: 'DM Mono', monospace; text-transform: uppercase; }
+    .demo-table-row { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr; gap: 8px; padding: 8px 12px; border-top: 1px solid #2d2d3a; }
+    .demo-table-row span { font-size: 11px; color: #ccc; }
+    .demo-badge { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 10px; font-family: 'DM Mono', monospace; }
+    .demo-badge.red { background: #ff4b4b22; color: #ff4b4b; }
+    .demo-badge.yellow { background: #ffd16a22; color: #ffd16a; }
+
+    /* DESCARGA */
+    .download-section { background: var(--bg2); }
+    .download-box {
+      background: var(--card);
+      border: 1.5px solid var(--accent-border);
+      border-radius: 16px;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      margin-top: 32px;
+    }
+    .download-icon { font-size: 48px; flex-shrink: 0; }
+    .download-text h3 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .download-text p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+
+    /* CTA FINAL */
+    .cta-final {
+      background: linear-gradient(135deg, var(--accent-light), transparent);
+      border-top: 1px solid var(--accent-border);
+      padding: 80px;
+      text-align: center;
+    }
+    .cta-final h2 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 900;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .cta-final p { font-size: 17px; color: var(--muted); margin-bottom: 32px; }
+    .cta-final .ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+    /* FOOTER */
+    footer {
+      padding: 28px 80px;
+      border-top: 1px solid var(--border);
+      background: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    footer .logo { font-family: 'Fraunces', serif; font-weight: 700; color: var(--muted); }
+    footer .copy { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .hero, .section { padding: 100px 24px 48px; }
+      .metrics-section, .download-section { padding: 48px 24px; }
+      .cta-final { padding: 48px 24px; }
+      .problema-grid, .metrics-grid { grid-template-columns: 1fr; }
+      .download-box { flex-direction: column; text-align: center; }
+      footer { padding: 24px; flex-direction: column; gap: 12px; }
+      .demo-body { grid-template-columns: 1fr; }
+      .demo-sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">DD.</a>
+  <a href="index.html#proyectos" class="nav-back">← Volver a proyectos</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="breadcrumb">
+    <a href="index.html">Inicio</a> / <a href="index.html#proyectos">Proyectos</a> / Clasificador de Materiales
+  </div>
+  <div class="hero-tag">Streamlit · OpenAI · Python</div>
+  <h1>Clasificador de<br/><em>Materiales con IA</em></h1>
+  <p class="hero-desc">
+    Las bases de materiales sucias cuestan dinero. <strong>Órdenes de compra duplicadas, reportes incorrectos y decisiones basadas en datos incorrectos.</strong> Esta herramienta detecta automáticamente duplicados semánticos y sugiere categorías correctas usando inteligencia artificial.
+  </p>
+  <div class="hero-ctas">
+    <a href="https://clasificador-materiales.streamlit.app" target="_blank" class="btn-primary">Probar demo en vivo →</a>
+    <a href="materiales_prueba.xlsx" download class="btn-ghost">📥 Descargar archivo de prueba</a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PROBLEMA -->
+<div class="section">
+  <div class="section-tag">El problema</div>
+  <h2 class="section-title">¿Por qué importa<br/>tener una base limpia?</h2>
+  <p style="color: var(--muted); font-size: 16px; line-height: 1.8;">En cualquier empresa con un ERP o sistema de compras, la base de materiales crece sin control. El mismo artículo aparece con distintos nombres, abreviaciones o errores de tipeo. El resultado es siempre el mismo.</p>
+
+  <div class="problema-grid">
+    <div class="problema-card">
+      <div class="problema-icon">📦</div>
+      <div class="problema-title">Compras duplicadas</div>
+      <div class="problema-desc">Se compra el mismo material a distintos proveedores porque aparece con nombres diferentes en el sistema, perdiendo poder de negociación.</div>
+    </div>
+    <div class="problema-card">
+      <div class="problema-icon">📊</div>
+      <div class="problema-title">Reportes incorrectos</div>
+      <div class="problema-desc">Los dashboards de gasto por categoría muestran datos fragmentados porque el mismo artículo está registrado de múltiples formas.</div>
+    </div>
+    <div class="problema-card">
+      <div class="problema-icon">⏱️</div>
+      <div class="problema-title">Limpieza manual interminable</div>
+      <div class="problema-desc">Los equipos de procurement pierden horas revisando manualmente miles de registros buscando duplicados que Excel no detecta.</div>
+    </div>
+    <div class="problema-card">
+      <div class="problema-icon">🏷️</div>
+      <div class="problema-title">Categorías inconsistentes</div>
+      <div class="problema-desc">Materiales mal categorizados distorsionan el análisis de gasto por categoría y dificultan la estrategia de sourcing.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CÓMO FUNCIONA -->
+<div class="section">
+  <div class="section-tag">Cómo funciona</div>
+  <h2 class="section-title">IA semántica,<br/>no solo texto exacto.</h2>
+  <p style="color: var(--muted); font-size: 16px; line-height: 1.8; margin-bottom: 8px;">La diferencia clave con Excel es que esta herramienta <strong>entiende el significado</strong> de las palabras, no solo si son iguales. Por eso detecta que "Bolsa polietileno 50x70 transp." y "Bolsa plástico transparente 50x70" son el mismo material.</p>
+
+  <div class="steps-list">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Carga tu archivo Excel o CSV</h3>
+        <p>Sube tu base de materiales con una columna de descripción y opcionalmente una columna de categoría. La versión demo acepta hasta 500 materiales.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>La IA genera embeddings semánticos</h3>
+        <p>Usando el modelo de OpenAI <em>text-embedding-3-small</em>, cada material se convierte en un vector numérico que representa su significado. Materiales similares quedan cerca en ese espacio vectorial.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Detección de duplicados por similitud coseno</h3>
+        <p>Se calcula la similitud entre todos los pares de materiales. Los que superan el umbral configurable (por defecto 0.82) se marcan como duplicados o candidatos a revisar.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h3>Sugerencia y corrección de categorías</h3>
+        <p>Para materiales sin categoría o con categoría sospechosa, la IA compara contra los materiales ya categorizados y sugiere la categoría correcta con nivel de confianza.</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h3>Resultados en gráficos y tabla descargable</h3>
+        <p>Los resultados se presentan en pestañas organizadas: duplicados detectados, sugerencias de categoría, gráficos de distribución y exportación en CSV.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MÉTRICAS -->
+<div class="metrics-section">
+  <div class="metrics-inner">
+    <div class="section-tag">Resultados</div>
+    <h2 class="section-title">Números que importan.</h2>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-num">85–95%</div>
+        <div class="metric-label">
+          <strong>Precisión en detección</strong>
+          Tasa de acierto en identificación de duplicados semánticos en bases de materiales industriales
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num">500</div>
+        <div class="metric-label">
+          <strong>Materiales en demo gratuita</strong>
+          Suficiente para validar el valor en tu base real antes de escalar a la versión completa
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-num">&lt;$0.01</div>
+        <div class="metric-label">
+          <strong>Costo por análisis</strong>
+          Procesar 500 materiales con OpenAI cuesta menos de un centavo de dólar
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO VISUAL -->
+<div class="section demo-section">
+  <div class="section-tag">Vista previa</div>
+  <h2 class="section-title">Así se ve<br/>la herramienta.</h2>
+
+  <div class="demo-screen">
+    <div class="demo-topbar">
+      <div class="demo-dot" style="background:#ff5f57"></div>
+      <div class="demo-dot" style="background:#ffbd2e"></div>
+      <div class="demo-dot" style="background:#28c840"></div>
+      <div class="demo-url">clasificador-materiales.streamlit.app</div>
+    </div>
+    <div class="demo-body">
+      <div class="demo-sidebar">
+        <div class="demo-sidebar-title">⚙ Parámetros</div>
+        <div class="demo-sidebar-label">Umbral de similitud</div>
+        <div class="demo-slider"><div class="demo-slider-fill"></div><div class="demo-slider-thumb"></div></div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:#ff4b4b;text-align:right;margin-bottom:12px">0.82</div>
+        <div class="demo-sidebar-label">Máx. materiales</div>
+        <div style="background:#1a1d24;border:1px solid #3d3d4e;border-radius:4px;padding:6px 10px;font-family:'DM Mono',monospace;font-size:12px;color:#ccc;margin-bottom:16px">500</div>
+        <div class="demo-toggle-row"><span class="demo-toggle-label">Detectar duplicados</span><div class="demo-toggle"></div></div>
+        <div class="demo-toggle-row" style="margin-top:8px"><span class="demo-toggle-label">Sugerir categoría</span><div class="demo-toggle"></div></div>
+      </div>
+      <div class="demo-main">
+        <div class="demo-title">🔍 Clasificador de Materiales con IA</div>
+        <div class="demo-sub">Detección semántica · Clasificación automática · SAP / ERP</div>
+        <div class="demo-metrics">
+          <div class="demo-metric"><div class="demo-metric-label">Total</div><div class="demo-metric-val">500</div></div>
+          <div class="demo-metric"><div class="demo-metric-label">Duplicados</div><div class="demo-metric-val red">87</div></div>
+          <div class="demo-metric"><div class="demo-metric-label">Únicos</div><div class="demo-metric-val green">389</div></div>
+          <div class="demo-metric"><div class="demo-metric-label">Revisar</div><div class="demo-metric-val yellow">24</div></div>
+        </div>
+        <div class="demo-table">
+          <div class="demo-table-header">
+            <span>Material original</span>
+            <span>Duplicado detectado</span>
+            <span>Similitud</span>
+            <span>Estado</span>
+          </div>
+          <div class="demo-table-row">
+            <span>Bolsa polietileno 50x70</span>
+            <span>Bolsa plástico transp. 50x70</span>
+            <span style="color:#ff4b4b;font-family:'DM Mono',monospace;font-size:11px">94%</span>
+            <span><div class="demo-badge red">Duplicado</div></span>
+          </div>
+          <div class="demo-table-row">
+            <span>Aceite lubricante ind. 5L</span>
+            <span>Lubricante industrial 5 litros</span>
+            <span style="color:#ff4b4b;font-family:'DM Mono',monospace;font-size:11px">91%</span>
+            <span><div class="demo-badge red">Duplicado</div></span>
+          </div>
+          <div class="demo-table-row">
+            <span>Papel bond A4 75gr resma</span>
+            <span>Resma papel A4 blanco 75g</span>
+            <span style="color:#ffd16a;font-family:'DM Mono',monospace;font-size:11px">85%</span>
+            <span><div class="demo-badge yellow">Revisar</div></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- DESCARGA -->
+<div class="download-section section" style="background:var(--bg2);max-width:100%;padding:80px">
+  <div style="max-width:900px;margin:0 auto">
+    <div class="section-tag">Archivo de prueba</div>
+    <h2 class="section-title">Pruébalo con<br/>datos reales.</h2>
+    <div class="download-box">
+      <div class="download-icon">📊</div>
+      <div class="download-text">
+        <h3>Base de materiales de ejemplo</h3>
+        <p>Archivo Excel con 41 materiales industriales que incluye duplicados intencionales con nombres similares pero no idénticos. Perfecto para ver cómo la IA detecta lo que Excel no puede. Incluye columna de categorías para probar la función de corrección automática.</p>
+        <a href="materiales_prueba.xlsx" download class="btn-primary" style="display:inline-flex">📥 Descargar archivo de prueba</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA FINAL -->
+<div class="cta-final">
+  <h2>¿Tu empresa tiene este problema?</h2>
+  <p>La versión demo acepta hasta 500 materiales gratis. Para bases más grandes o implementación personalizada, conversemos.</p>
+  <div class="ctas">
+    <a href="https://clasificador-materiales.streamlit.app" target="_blank" class="btn-primary">Probar demo gratuita →</a>
+    <a href="mailto:dcdiedrichs@gmail.com" class="btn-ghost">Contactar para versión completa</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Diego Diedrichs.</div>
+  <div class="copy">© 2025 · diegodiedrichs.cl</div>
+</footer>
+
+</body>
+</html>
