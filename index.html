@@ -350,6 +350,21 @@
       font-size: 11px;
       color: var(--muted);
     }
+    .project-status.live-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent);
+      color: #fff;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 20px;
+      transition: background 0.2s;
+    }
+    a:hover .project-status.live-status { background: #1648c0; }
     .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #c9a227; }
     .status-dot.live { background: var(--accent); animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -604,10 +619,10 @@
     <a href="clasificador.html" style="text-decoration:none;color:inherit">
       <div class="project-card">
         <div class="project-num">02</div>
-        <span class="project-tool">Streamlit + IA</span>
+        <span class="project-tool">Streamlit · OpenAI · Python</span>
         <h3 class="project-title">Clasificador de materiales con IA</h3>
         <p class="project-desc">Detecta duplicados semánticos y clasifica registros automáticamente. Resuelve el problema de bases de datos sucias en cualquier ERP o sistema de gestión.</p>
-        <div class="project-status"><div class="status-dot live"></div>Ver proyecto →</div>
+        <div class="project-status live-status"><div class="status-dot live"></div>Ver proyecto →</div>
       </div>
     </a>
 
@@ -619,13 +634,15 @@
       <div class="project-status"><div class="status-dot"></div>En desarrollo</div>
     </div>
 
-    <div class="project-card">
-      <div class="project-num">04</div>
-      <span class="project-tool">Copilot Studio</span>
-      <h3 class="project-title">Asistente inteligente de procesos</h3>
-      <p class="project-desc">Chatbot entrenado con la documentación de tu área que responde preguntas frecuentes, guía a usuarios externos y escala a humanos cuando es necesario.</p>
-      <div class="project-status"><div class="status-dot"></div>En desarrollo</div>
-    </div>
+    <a href="procurement-strategy.html" style="text-decoration:none;color:inherit">
+      <div class="project-card">
+        <div class="project-num">04</div>
+        <span class="project-tool">Streamlit · OpenAI · Python</span>
+        <h3 class="project-title">Selector de estrategia de compra</h3>
+        <p class="project-desc">Combina Matriz de Kraljic, Índice de Subastabilidad e IA para recomendar la estrategia óptima de negociación — qué evento usar, cuándo subastar y cuánto ahorrar.</p>
+        <div class="project-status live-status"><div class="status-dot live"></div>Ver proyecto →</div>
+      </div>
+    </a>
 
     <div class="project-card">
       <div class="project-num">05</div>
