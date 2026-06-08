@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Procurement Suite — Diego Diedrichs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QKXM9VFP8V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QKXM9VFP8V');
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #F7F8FA;
+      --white:    #FFFFFF;
+      --border:   #E5E7EB;
+      --text:     #1A2233;
+      --muted:    #6B7A94;
+      --accent:   #1A56DB;
+      --success:  #198754;
+      --warning:  #FD7E14;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 48px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Fraunces', serif;
+      font-weight: 900;
+      font-size: 20px;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-back {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 64px 48px 56px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-desc {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 680px;
+      line-height: 1.75;
+      margin-bottom: 36px;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--bg);
+    }
+    .tag.blue  { background: #EEF2FF; border-color: #C7D2FE; color: #4338CA; }
+    .tag.green { background: #F0FDF4; border-color: #BBF7D0; color: #15803D; }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      padding: 13px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .hero-cta:hover { background: #1648C0; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,86,219,0.28); }
+    .hero-cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      color: var(--text);
+      padding: 13px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      text-decoration: none;
+      border: 1.5px solid var(--border);
+      margin-left: 10px;
+      transition: all 0.2s;
+    }
+    .hero-cta-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── LAYOUT ── */
+    .page-body {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 48px 80px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* ── SECTIONS ── */
+    section { margin-bottom: 48px; }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    p { color: var(--muted); font-size: 15px; line-height: 1.75; margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── FLOW VISUAL ── */
+    .flow-block {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+    }
+    .flow-steps {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+    }
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex: 1;
+      gap: 8px;
+    }
+    .flow-step-num {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Fraunces', serif;
+      font-size: 16px; font-weight: 900;
+      flex-shrink: 0;
+    }
+    .step-active   { background: var(--accent); color: #fff; }
+    .step-external { background: var(--bg); color: #b0b8c8; border: 1.5px dashed #c8cdd8; }
+    .flow-step-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
+    .flow-step-label strong { color: var(--text); display: block; font-size: 12px; }
+    .flow-step-label em { font-style: normal; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); }
+    .flow-arrow { color: #D6D9E0; font-size: 16px; padding: 0 2px; margin-top: 10px; flex-shrink: 0; }
+
+    /* ── MODULE CARDS ── */
+    .module-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .module-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #4ECDC4);
+    }
+    .module-num {
+      font-family: 'Fraunces', serif;
+      font-size: 40px;
+      font-weight: 900;
+      color: #EEF1F7;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .module-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .module-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .module-desc  { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+    .module-features { list-style: none; padding: 0; }
+    .module-features li {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 5px 0;
+      border-top: 1px solid var(--bg);
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+    }
+    .module-features li::before { content: '✓'; color: var(--accent); font-weight: 700; flex-shrink: 0; font-size: 11px; }
+
+    /* ── SCREENSHOTS ── */
+    .screenshot-block {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .screenshot-block img {
+      width: 100%;
+      display: block;
+      border-bottom: 1px solid var(--border);
+    }
+    .screenshot-caption {
+      padding: 14px 18px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .screenshot-caption strong { color: var(--text); }
+
+    /* ── METRICS ── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .metric-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px 20px;
+      text-align: center;
+    }
+    .metric-value {
+      font-family: 'Fraunces', serif;
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .metric-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+    /* ── AI SECTION ── */
+    .ai-block {
+      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      border: 1px solid #C7D2FE;
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+    }
+    .ai-block h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1E40AF;
+      margin-bottom: 14px;
+    }
+    .ai-item {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+    .ai-item:last-child { margin-bottom: 0; }
+    .ai-icon {
+      width: 36px; height: 36px;
+      background: #fff;
+      border: 1px solid #C7D2FE;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .ai-content h4 { font-size: 14px; font-weight: 600; color: #1E40AF; margin-bottom: 3px; }
+    .ai-content p  { font-size: 13px; color: #4338CA; line-height: 1.55; margin: 0; }
+
+    /* ── OUTCOME BLOCK ── */
+    .outcome-block {
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+    }
+    .outcome-block h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      color: #15803D;
+      margin-bottom: 12px;
+    }
+    .outcome-list { list-style: none; padding: 0; }
+    .outcome-list li {
+      font-size: 14px;
+      color: #166534;
+      padding: 6px 0;
+      border-bottom: 1px solid #BBF7D0;
+      display: flex;
+      gap: 10px;
+    }
+    .outcome-list li:last-child { border-bottom: none; }
+    .outcome-list li::before { content: '→'; color: var(--success); flex-shrink: 0; }
+
+    /* ── TECH STACK ── */
+    .stack-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stack-item {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .stack-icon { font-size: 20px; }
+    .stack-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .stack-desc { font-size: 11px; color: var(--muted); }
+
+    /* ── SIDEBAR ── */
+    .sidebar-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .sidebar-card h3 {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .sidebar-list { list-style: none; padding: 0; }
+    .sidebar-list li {
+      font-size: 13px;
+      color: var(--muted);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--bg);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .sidebar-list li:last-child { border-bottom: none; }
+    .sidebar-list li strong { color: var(--text); min-width: 80px; flex-shrink: 0; }
+    .sidebar-link {
+      display: block;
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text);
+      text-decoration: none;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-link:hover { border-color: var(--accent); color: var(--accent); background: #EEF2FF; }
+    .sidebar-link span { margin-left: auto; font-size: 12px; color: var(--muted); }
+
+    /* ── QUOTE ── */
+    .quote-block {
+      border-left: 3px solid var(--accent);
+      padding: 16px 20px;
+      background: var(--white);
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 24px;
+    }
+    .quote-block p { font-size: 15px; color: var(--text); font-style: italic; line-height: 1.7; margin-bottom: 8px; }
+    .quote-block cite { font-size: 12px; color: var(--muted); font-style: normal; font-family: 'DM Mono', monospace; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .page-body { grid-template-columns: 1fr; padding: 24px 20px; }
+      .hero { padding: 40px 20px 32px; }
+      nav { padding: 0 20px; }
+      .flow-steps { flex-wrap: wrap; gap: 12px; }
+      .module-grid { grid-template-columns: 1fr; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">D.<span>D.</span></a>
+  <a href="index.html" class="nav-back">← Volver al portafolio</a>
+</nav>
+
+<!-- HERO -->
+<div style="background:var(--white); border-bottom:1px solid var(--border)">
+  <div class="hero">
+    <div class="hero-eyebrow">Proyecto 03 · Procurement Suite</div>
+    <h1 class="hero-title">De la licitación<br/>a la <em>adjudicación</em></h1>
+    <p class="hero-desc">
+      Suite de dos herramientas especializadas que cubren el ciclo completo de sourcing: desde el diseño de la RFP hasta la recomendación técnica para el comité. Construida con Python, Streamlit y IA generativa.
+    </p>
+    <div class="hero-meta">
+      <span class="tag blue">Python</span>
+      <span class="tag blue">Streamlit</span>
+      <span class="tag blue">OpenAI GPT-4o</span>
+      <span class="tag blue">SAP Ariba</span>
+      <span class="tag green">Disponible en producción</span>
+      <span class="tag">2 módulos</span>
+      <span class="tag">Exportación Word + Excel</span>
+    </div>
+    <a href="https://procurement-suite.streamlit.app/" target="_blank" class="hero-cta">
+      → Abrir Procurement Suite
+    </a>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+
+  <!-- MAIN CONTENT -->
+  <main>
+
+    <!-- EL PROBLEMA -->
+    <section>
+      <div class="section-label">El problema</div>
+      <h2>Dos etapas críticas, sin herramientas digitales</h2>
+      <p>
+        En la mayoría de las áreas de compras, el proceso de licitación se gestiona con documentos Word, hojas Excel sin fórmulas y correos. Un comprador que necesita generar una RFP parte de una hoja en blanco. Y cuando recibe las propuestas, construye manualmente la matriz de evaluación, calcula los puntajes y redacta el informe para el comité.
+      </p>
+      <p>
+        Cada proceso implica entre 4 y 8 horas de trabajo administrativo repetitivo. Multiplica eso por 10 a 30 licitaciones al año y tienes semanas enteras de tiempo profesional invertido en formatos, no en decisiones.
+      </p>
+
+      <div class="flow-block">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:20px">Flujo completo de sourcing</div>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num step-active">1</div>
+            <div class="flow-step-label"><strong>Diseñar la RFP</strong><em>RFP Builder</em></div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num step-active">2</div>
+            <div class="flow-step-label"><strong>Definir criterios</strong><em>RFP Builder</em></div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num step-external">3</div>
+            <div class="flow-step-label" style="color:#b0b8c8">Publicar en<br/>Ariba / Coupa</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num step-external">4</div>
+            <div class="flow-step-label" style="color:#b0b8c8">Recibir<br/>ofertas</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num step-active">5</div>
+            <div class="flow-step-label"><strong>Comparar</strong><em>Supplier Evaluator</em></div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num step-active">6</div>
+            <div class="flow-step-label"><strong>Informe comité</strong><em>Supplier Evaluator</em></div>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Los pasos 3 y 4 ocurren en plataformas externas como SAP Ariba o Coupa. La Procurement Suite cubre los pasos 1, 2, 5 y 6: exactamente donde el trabajo manual era mayor.
+      </p>
+    </section>
+
+    <!-- LOS MÓDULOS -->
+    <section>
+      <div class="section-label">La solución</div>
+      <h2>Dos módulos, un solo flujo</h2>
+
+      <div class="module-grid">
+        <div class="module-card">
+          <div class="module-num">01</div>
+          <div class="module-tag">RFP Builder</div>
+          <div class="module-title">Diseña la licitación</div>
+          <div class="module-desc">El comprador completa un formulario de contexto y la IA genera una RFP profesional adaptada a la categoría y el país.</div>
+          <ul class="module-features">
+            <li>RFP adaptada a 11 categorías de compra</li>
+            <li>Requisitos obligatorios separados de criterios evaluables</li>
+            <li>Documento Word listo para enviar a proveedores</li>
+            <li>Matriz Excel vacía con fórmulas, lista para Ariba o Coupa</li>
+            <li>Límite de 3 generaciones por sesión (demo)</li>
+          </ul>
+        </div>
+        <div class="module-card">
+          <div class="module-num">02</div>
+          <div class="module-tag">Supplier Evaluator</div>
+          <div class="module-title">Evalúa y compara</div>
+          <div class="module-desc">El comprador importa la metodología del RFP Builder o la crea manualmente, ingresa los puntajes y obtiene el análisis completo.</div>
+          <ul class="module-features">
+            <li>Importación directa desde el Excel del RFP Builder</li>
+            <li>Descalificación automática por requisitos eliminatorios</li>
+            <li>Dashboard con jerarquía visual: 🥇🥈🥉</li>
+            <li>Detección automática de riesgos por puntaje y peso</li>
+            <li>Sugerencia BAFO cuando la diferencia es menor a 8 puntos</li>
+            <li>Informe ejecutivo Word + Excel para comité</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAPTURAS -->
+    <section>
+      <div class="section-label">La herramienta en acción</div>
+      <h2>La herramienta en acción</h2>
+
+            <div class="screenshot-block">
+        <img src="ps-screen-01-landing.png" alt="Procurement Suite — Landing page con flujo de sourcing y dos módulos"/>
+        <div class="screenshot-caption"><strong>Landing page.</strong> Flujo de 6 pasos que comunica el ciclo completo de sourcing. Los pasos 3 y 4 (Ariba / Coupa) son externos a la herramienta.</div>
+      </div>
+          </div>
+        </div>
+        <div class="screenshot-caption"><strong>Landing page.</strong> Fondo claro y flujo de 6 pasos que comunica el ciclo completo de sourcing.</div>
+      </div>
+
+            <div class="screenshot-block">
+        <img src="ps-screen-02-rfp-builder.png" alt="RFP Builder — Formulario con sidebar y configuración"/>
+        <div class="screenshot-caption"><strong>RFP Builder — formulario.</strong> El comprador ingresa categoría, país, descripción y parámetros del proceso. El sidebar muestra generaciones disponibles y secciones opcionales como SLA, garantías y referencias.</div>
+      </div>
+      <div class="screenshot-block" style="margin-top:16px">
+        <img src="ps-screen-03-metodologia.png" alt="Metodología generada — Requisitos obligatorios y criterios evaluables"/>
+        <div class="screenshot-caption"><strong>Metodología generada por IA.</strong> La herramienta separa automáticamente requisitos obligatorios (con su forma de verificación) de criterios evaluables con pesos ponderados que suman exactamente 100%.</div>
+      </div>
+          </div>
+        </div>
+        <div class="screenshot-caption"><strong>Supplier Evaluator.</strong> Matriz de evaluación ponderada con dashboard de ranking. Proveedor B descalificado por requisito eliminatorio. Diferencia de 35.5 puntos justifica adjudicación directa a Proveedor C.</div>
+      </div>
+
+            <div class="screenshot-block">
+        <img src="ps-screen-04-evaluacion.png" alt="Supplier Evaluator — Matriz de evaluación con requisitos y puntajes"/>
+        <div class="screenshot-caption"><strong>Supplier Evaluator — evaluación.</strong> Paso 1: verificación de requisitos eliminatorios por proveedor. Paso 2: ingreso de puntajes (0-100) por criterio. La herramienta calcula automáticamente los resultados ponderados.</div>
+      </div>
+      <div class="screenshot-block" style="margin-top:16px">
+        <img src="ps-screen-05-resultados.png" alt="Dashboard de ranking, riesgos detectados y análisis comparativo"/>
+        <div class="screenshot-caption"><strong>Dashboard de resultados.</strong> Ranking visual con jerarquía 🥇🥈🥉, riesgos detectados por proveedor basados en puntajes reales, análisis comparativo y resultado técnico listo para presentar al comité.</div>
+      </div>
+        <div class="screenshot-caption"><strong>Análisis comparativo y resultado técnico.</strong> Lenguaje defensible pensado para presentar al comité.</div>
+      </div>
+    </section>
+
+    <!-- IA -->
+    <section>
+      <div class="section-label">Uso de IA</div>
+      <h2>IA generativa aplicada a procurement</h2>
+
+      <div class="ai-block">
+        <h3>Cómo usa la IA esta herramienta</h3>
+        <div class="ai-item">
+          <div class="ai-icon">📝</div>
+          <div class="ai-content">
+            <h4>Generación de RFP con GPT-4o</h4>
+            <p>El modelo recibe categoría, país, descripción, presupuesto y duración, y genera una RFP estructurada con secciones específicas. El prompt incluye restricciones explícitas para evitar placeholders genéricos.</p>
+          </div>
+        </div>
+        <div class="ai-item">
+          <div class="ai-icon">⚖️</div>
+          <div class="ai-content">
+            <h4>Criterios derivados de la RFP</h4>
+            <p>Un segundo llamado a la API genera los requisitos obligatorios y los criterios evaluables en JSON estructurado, separando explícitamente ambas categorías. Los pesos suman exactamente 100.</p>
+          </div>
+        </div>
+        <div class="ai-item">
+          <div class="ai-icon">🔍</div>
+          <div class="ai-content">
+            <h4>Riesgos basados en datos reales</h4>
+            <p>Los riesgos no son genéricos. Se calculan comparando el puntaje obtenido contra el peso del criterio: si un proveedor obtiene menos de 40/100 en un criterio de peso ≥15%, se genera una alerta específica con el nombre, puntaje y peso.</p>
+          </div>
+        </div>
+        <div class="ai-item">
+          <div class="ai-icon">🔄</div>
+          <div class="ai-content">
+            <h4>BAFO automático por umbral</h4>
+            <p>Si la diferencia entre el primer y segundo lugar es menor a 8 puntos, el sistema recomienda solicitar una oferta final (BAFO) en lugar de adjudicar directamente. El umbral está parametrizado y es modificable.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÉTRICAS -->
+    <section>
+      <div class="section-label">Impacto estimado</div>
+      <h2>De horas a minutos</h2>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value">−85%</div>
+          <div class="metric-label">Tiempo de preparación de RFP<br/><small style="color:#9aa3b2">De ~3 hrs a ~20 min</small></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">−70%</div>
+          <div class="metric-label">Tiempo de evaluación y ranking<br/><small style="color:#9aa3b2">De ~2 hrs a ~30 min</small></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">0</div>
+          <div class="metric-label">Errores de fórmula en la matriz<br/><small style="color:#9aa3b2">Cálculos automáticos verificados</small></div>
+        </div>
+      </div>
+
+      <div class="outcome-block">
+        <h3>¿Qué le ahorra al comprador?</h3>
+        <ul class="outcome-list">
+          <li>Redactar la RFP desde cero en Word — ahora se genera en segundos</li>
+          <li>Construir la tabla de criterios y pesos manualmente — ahora viene de la IA</li>
+          <li>Calcular puntajes ponderados en Excel — ahora son automáticos</li>
+          <li>Detectar proveedores que no cumplen requisitos — ahora es automático con descalificación</li>
+          <li>Redactar el informe ejecutivo para el comité — ahora se exporta en Word con un clic</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CONTEXTO REAL -->
+    <section>
+      <div class="section-label">Contexto profesional</div>
+      <h2>Construido desde la experiencia real</h2>
+      <p>
+        Cada decisión de diseño en esta herramienta refleja problemas reales de procurement vividos durante 8 años gestionando procesos de sourcing en retail y consumo masivo en Chile, Argentina, Perú, Colombia y Brasil.
+      </p>
+      <p>
+        La separación entre requisitos obligatorios y criterios evaluables responde a cómo operan los procesos reales en plataformas como SAP Ariba. La lógica de BAFO refleja una práctica estándar en licitaciones corporativas. El orden del informe — Resumen → Ranking → Matriz → RFP — es el mismo que espera un comité de compras.
+      </p>
+
+      <div class="quote-block">
+        <p>"Ya no parece un generador de RFP. Parece una plataforma de sourcing y evaluación de proveedores especializada en procurement."</p>
+        <cite>Feedback de experto en procurement durante el desarrollo</cite>
+      </div>
+
+      <p>
+        La herramienta fue iterada con feedback real de compradores profesionales, ajustando el lenguaje ("resultado técnico" en lugar de "recomendación de adjudicación"), la lógica de negocio y la UX hasta que el flujo se sintiera natural para alguien con experiencia en procesos de compra.
+      </p>
+    </section>
+
+    <!-- STACK -->
+    <section>
+      <div class="section-label">Stack técnico</div>
+      <h2>Tecnologías utilizadas</h2>
+      <div class="stack-grid">
+        <div class="stack-item">
+          <div class="stack-icon">🐍</div>
+          <div>
+            <div class="stack-name">Python</div>
+            <div class="stack-desc">Lógica de negocio y cálculos</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">⚡</div>
+          <div>
+            <div class="stack-name">Streamlit</div>
+            <div class="stack-desc">Interfaz web y navegación</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🤖</div>
+          <div>
+            <div class="stack-name">OpenAI GPT-4o</div>
+            <div class="stack-desc">Generación de RFP y criterios</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">📊</div>
+          <div>
+            <div class="stack-name">openpyxl</div>
+            <div class="stack-desc">Exportación Excel con fórmulas</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">📄</div>
+          <div>
+            <div class="stack-name">python-docx</div>
+            <div class="stack-desc">Informe ejecutivo en Word</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🚀</div>
+          <div>
+            <div class="stack-name">Streamlit Cloud</div>
+            <div class="stack-desc">Deploy en producción</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="sidebar-card">
+      <h3>Acceder a la herramienta</h3>
+      <a href="https://procurement-suite.streamlit.app/" target="_blank" class="sidebar-link">
+        🏠 Landing Page <span>↗</span>
+      </a>
+      <a href="https://procurement-suite.streamlit.app/rfp_builder" target="_blank" class="sidebar-link">
+        📋 RFP Builder <span>↗</span>
+      </a>
+      <a href="https://procurement-suite.streamlit.app/supplier_evaluator" target="_blank" class="sidebar-link">
+        📊 Supplier Evaluator <span>↗</span>
+      </a>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Ficha del proyecto</h3>
+      <ul class="sidebar-list">
+        <li><strong>Tipo</strong> Suite de 2 módulos</li>
+        <li><strong>Stack</strong> Python · Streamlit · OpenAI</li>
+        <li><strong>Estado</strong> Publicado en producción</li>
+        <li><strong>Módulos</strong> RFP Builder + Supplier Evaluator</li>
+        <li><strong>Output</strong> Word + Excel ejecutivos</li>
+        <li><strong>IA</strong> GPT-4o via API</li>
+      </ul>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Categorías de compra soportadas</h3>
+      <ul class="sidebar-list">
+        <li><strong></strong> IT y Tecnología</li>
+        <li><strong></strong> Logística y Distribución</li>
+        <li><strong></strong> MRO (Mantenimiento)</li>
+        <li><strong></strong> Facilities y SSGG</li>
+        <li><strong></strong> Transporte</li>
+        <li><strong></strong> Construcción y Obras</li>
+        <li><strong></strong> Consultoría</li>
+        <li><strong></strong> + 4 categorías más</li>
+      </ul>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Otros proyectos</h3>
+      <a href="clasificador.html" class="sidebar-link">
+        🔍 Clasificador de Materiales <span>→</span>
+      </a>
+      <a href="procurement-strategy.html" class="sidebar-link">
+        📐 Selector de Estrategia <span>→</span>
+      </a>
+    </div>
+  </aside>
+
+</div>
+
+</body>
+</html>
