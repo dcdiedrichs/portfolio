@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monitor de Precios de Mercado — Diego Diedrichs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QKXM9VFP8V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-QKXM9VFP8V');
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #F7F8FA;
+      --white:    #FFFFFF;
+      --border:   #E5E7EB;
+      --text:     #1A2233;
+      --muted:    #6B7A94;
+      --accent:   #1A56DB;
+      --success:  #198754;
+      --warning:  #FD7E14;
+      --danger:   #DC3545;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 48px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Fraunces', serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .nav-back {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 64px 48px 56px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 18px;
+    }
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: 900;
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-desc {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 660px;
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--bg);
+    }
+    .tag.blue  { background: #EEF2FF; border-color: #C7D2FE; color: #4338CA; }
+    .tag.green { background: #F0FDF4; border-color: #BBF7D0; color: #15803D; }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      padding: 13px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .hero-cta:hover { background: #1648C0; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,86,219,0.28); }
+
+    /* ── LAYOUT ── */
+    .page-body {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 48px 80px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 48px;
+      align-items: start;
+    }
+
+    section { margin-bottom: 48px; }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    p { color: var(--muted); font-size: 15px; line-height: 1.75; margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--text); font-weight: 600; }
+
+    /* ── DASHBOARD EMBED ── */
+    .dashboard-frame {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .dashboard-bar {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #FF5F57; }
+    .dot.y { background: #FEBC2E; }
+    .dot.g { background: #28C840; }
+    .dashboard-url {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      margin-left: 10px;
+    }
+    .dashboard-embed {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+    }
+    .dashboard-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .embed-note {
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── FLOW ── */
+    .flow-block {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }
+    .flow-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+    .flow-steps { display: flex; align-items: flex-start; }
+    .flow-step {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; flex: 1; gap: 8px;
+    }
+    .flow-step-num {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Fraunces', serif; font-size: 15px; font-weight: 900;
+      background: var(--accent); color: #fff; flex-shrink: 0;
+    }
+    .flow-step-label { font-size: 12px; color: var(--muted); line-height: 1.45; }
+    .flow-step-label strong { display: block; color: var(--text); font-size: 12px; margin-bottom: 2px; }
+    .flow-step-label em { font-style: normal; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); }
+    .flow-arrow { color: #D6D9E0; font-size: 16px; padding: 0 4px; margin-top: 10px; flex-shrink: 0; }
+
+    /* ── ALERT LOGIC CARDS ── */
+    .logic-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .logic-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      border-top: 3px solid var(--border);
+    }
+    .logic-card.op   { border-top-color: var(--success); }
+    .logic-card.ri   { border-top-color: var(--danger); }
+    .logic-card.es   { border-top-color: var(--muted); }
+    .logic-state {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .logic-card.op .logic-state { color: var(--success); }
+    .logic-card.ri .logic-state { color: var(--danger); }
+    .logic-card.es .logic-state { color: var(--muted); }
+    .logic-cond {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text);
+      background: var(--bg);
+      border-radius: 5px;
+      padding: 5px 8px;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+    .logic-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    .formula {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    /* ── CASE BLOCK ── */
+    .case-block {
+      background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+      border: 1px solid #C7D2FE;
+      border-radius: 14px;
+      padding: 26px 30px;
+      margin-bottom: 24px;
+    }
+    .case-block h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 19px;
+      color: #1E40AF;
+      margin-bottom: 12px;
+    }
+    .case-block p { color: #4338CA; font-size: 14px; margin-bottom: 10px; }
+    .case-block p:last-child { margin-bottom: 0; }
+    .case-block strong { color: #1E3A8A; }
+
+    /* ── CAVEAT ── */
+    .caveat-block {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin-bottom: 20px;
+    }
+    .caveat-block h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 17px;
+      color: #92400E;
+      margin-bottom: 10px;
+    }
+    .caveat-block p { color: #78350F; font-size: 14px; }
+
+    /* ── METRICS ── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .metric-value {
+      font-family: 'Fraunces', serif;
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .metric-label { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+    /* ── DATA TABLE ── */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .data-table th {
+      background: var(--accent);
+      color: #fff;
+      text-align: left;
+      padding: 10px 14px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .data-table td {
+      padding: 9px 14px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .data-table td:first-child {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+    }
+    .data-table tr:nth-child(even) td { background: var(--bg); }
+
+    /* ── STACK ── */
+    .stack-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stack-item {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .stack-icon { font-size: 20px; }
+    .stack-name { font-size: 13px; font-weight: 500; color: var(--text); }
+    .stack-desc { font-size: 11px; color: var(--muted); }
+
+    /* ── SIDEBAR ── */
+    .sidebar-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 16px;
+    }
+    .sidebar-card h3 {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .sidebar-list { list-style: none; padding: 0; }
+    .sidebar-list li {
+      font-size: 13px;
+      color: var(--muted);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--bg);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .sidebar-list li:last-child { border-bottom: none; }
+    .sidebar-list li strong { color: var(--text); min-width: 76px; flex-shrink: 0; }
+    .sidebar-link {
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text);
+      text-decoration: none;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-link:hover { border-color: var(--accent); color: var(--accent); background: #EEF2FF; }
+    .sidebar-link span { margin-left: auto; font-size: 12px; color: var(--muted); }
+
+    .idx-list { list-style: none; padding: 0; }
+    .idx-list li {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--bg);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .idx-list li:last-child { border-bottom: none; }
+    .idx-list li span { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); flex-shrink: 0; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      .page-body { grid-template-columns: 1fr; padding: 24px 20px; }
+      .hero { padding: 40px 20px 32px; }
+      nav { padding: 0 20px; }
+      .flow-steps { flex-wrap: wrap; gap: 14px; }
+      .logic-grid, .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .dashboard-embed { aspect-ratio: 3 / 4; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">DD.</a>
+  <a href="index.html" class="nav-back">← Volver al portafolio</a>
+</nav>
+
+<!-- HERO -->
+<div style="background:var(--white); border-bottom:1px solid var(--border)">
+  <div class="hero">
+    <div class="hero-eyebrow">Proyecto 03 · Monitor de Precios</div>
+    <h1 class="hero-title">Renegociar cuando lo<br/>dice el <em>mercado</em></h1>
+    <p class="hero-desc">
+      Dashboard que cruza índices de commodities e indicadores macro contra los contratos vigentes, y detecta automáticamente cuándo la brecha justifica salir a renegociar. Datos reales, actualización diaria, sin intervención manual.
+    </p>
+    <div class="hero-meta">
+      <span class="tag blue">Looker Studio</span>
+      <span class="tag blue">Google Apps Script</span>
+      <span class="tag blue">FRED API</span>
+      <span class="tag blue">Google Sheets</span>
+      <span class="tag green">Dashboard en vivo</span>
+      <span class="tag">13 índices</span>
+      <span class="tag">Actualización diaria</span>
+    </div>
+    <a href="https://lookerstudio.google.com/reporting/768cb46f-e565-416a-a224-77bdd03f0b23" target="_blank" rel="noopener" class="hero-cta">
+      → Abrir el dashboard completo
+    </a>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+
+  <main>
+
+    <!-- EL PROBLEMA -->
+    <section>
+      <div class="section-label">El problema</div>
+      <h2>Los contratos se renegocian por calendario, no por mercado</h2>
+      <p>
+        En la mayoría de las áreas de compras, la revisión de un contrato ocurre cuando toca: al vencimiento, en el ciclo anual de presupuesto, o cuando el proveedor pide un alza. Casi nunca ocurre porque el costo del insumo cayó.
+      </p>
+      <p>
+        El resultado es asimétrico y siempre en la misma dirección. Cuando la materia prima sube, el proveedor lo detecta de inmediato y solicita el ajuste. Cuando baja, nadie del lado del comprador se entera, y el precio se mantiene fijo por meses.
+      </p>
+      <p>
+        La información existe y es pública. El problema es que <strong>nadie la está mirando de forma sistemática</strong> y cruzada contra la cartera de contratos.
+      </p>
+
+      <div class="case-block">
+        <h3>El caso que originó el proyecto</h3>
+        <p>
+          Una empresa compra bolsas de papel kraft por un monto anual relevante. El precio se fijó al firmar el contrato y desde entonces no se ha movido.
+        </p>
+        <p>
+          Pero el índice de precios de pulpa y papel —público, actualizado mensualmente por la Reserva Federal de St. Louis— viene a la baja. El costo del proveedor cayó; el precio de venta al comprador, no.
+        </p>
+        <p>
+          <strong>Ese diferencial es la conversación que nadie está teniendo</strong>, simplemente porque el dato no está a la vista cuando se toman las decisiones.
+        </p>
+      </div>
+    </section>
+
+    <!-- CÓMO FUNCIONA -->
+    <section>
+      <div class="section-label">La solución</div>
+      <h2>Un pipeline automatizado, de la API al comité</h2>
+
+      <div class="flow-block">
+        <div class="flow-title">Arquitectura del monitor</div>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-label"><strong>Extracción</strong><em>Apps Script</em></div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-label"><strong>Almacenamiento</strong><em>Google Sheets</em></div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-label"><strong>Cruce y alertas</strong><em>Lógica de negocio</em></div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <div class="flow-step-label"><strong>Visualización</strong><em>Looker Studio</em></div>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Un script en Google Apps Script consulta cada mañana las APIs de FRED y de mindicador.cl, normaliza las series a frecuencia mensual y las escribe en Google Sheets en formato largo. Sobre esa base cruza cada contrato vigente contra el índice que explica su costo, calcula la variación desde la fecha de firma y clasifica el resultado.
+      </p>
+      <p>
+        Looker Studio lee la hoja directamente. No hay servidores, no hay costos de infraestructura y no hay pasos manuales: el trigger diario mantiene todo actualizado.
+      </p>
+    </section>
+
+    <!-- DEMO EN VIVO -->
+    <section>
+      <div class="section-label">Dashboard en vivo</div>
+      <h2>El monitor funcionando</h2>
+      <p>
+        Este es el reporte real, con datos actualizados. Puedes filtrar por categoría, ajustar el rango de fechas y navegar entre las dos páginas del informe.
+      </p>
+
+      <div class="dashboard-frame">
+        <div class="dashboard-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="dashboard-url">lookerstudio.google.com — Monitor de Precios de Mercado</div>
+        </div>
+        <div class="dashboard-embed">
+          <iframe
+            src="https://lookerstudio.google.com/embed/reporting/768cb46f-e565-416a-a224-77bdd03f0b23/page/mn34F"
+            frameborder="0"
+            allowfullscreen
+            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox">
+          </iframe>
+        </div>
+      </div>
+      <p class="embed-note">
+        Los contratos cargados son casos de prueba. Los índices y sus valores son datos reales de FRED y del Banco Central de Chile.
+      </p>
+    </section>
+
+    <!-- LÓGICA DE ALERTAS -->
+    <section>
+      <div class="section-label">Lógica de negocio</div>
+      <h2>Cómo se genera una alerta</h2>
+
+      <p>
+        Cada contrato se ancla al índice que explica su costo y a la fecha en que se fijó el precio. A partir de ahí, la variación es lo único que importa:
+      </p>
+
+      <div class="formula">
+        variación = ( índice_hoy ÷ índice_a_la_firma − 1 ) × 100
+      </div>
+
+      <p>
+        El umbral es configurable por contrato, porque no todas las categorías tienen la misma sensibilidad. Un 4% de movimiento en diésel sobre un contrato de transporte de siete cifras pesa mucho más que un 7% en un contrato menor de MRO.
+      </p>
+
+      <div class="logic-grid">
+        <div class="logic-card op">
+          <div class="logic-state">OPORTUNIDAD</div>
+          <div class="logic-cond">variación ≤ −umbral</div>
+          <div class="logic-desc">El insumo bajó y el precio no. Hay espacio para solicitar revisión a la baja.</div>
+        </div>
+        <div class="logic-card ri">
+          <div class="logic-state">RIESGO</div>
+          <div class="logic-cond">variación ≥ +umbral</div>
+          <div class="logic-desc">El insumo subió. El proveedor va a pedir alza: conviene anticiparse y preparar la posición.</div>
+        </div>
+        <div class="logic-card es">
+          <div class="logic-state">ESTABLE</div>
+          <div class="logic-cond">dentro del umbral</div>
+          <div class="logic-desc">Sin movimiento relevante. No requiere acción ni ocupa atención del equipo.</div>
+        </div>
+      </div>
+
+      <p>
+        La tabla de alertas se ordena por ahorro potencial descendente. Lo primero que ve quien abre el dashboard es dónde está el dinero, no una lista alfabética de contratos.
+      </p>
+
+      <div class="caveat-block">
+        <h3>Una precisión metodológica</h3>
+        <p>
+          El ahorro potencial aplica la variación del índice al monto anual del contrato. Es una <strong>estimación de techo</strong>: asume traspaso completo del índice al precio, lo que en la práctica nunca ocurre, porque el proveedor tiene costos fijos, márgenes y estructura propia. Sirve para priorizar qué contrato abrir primero, no para comprometer una cifra de ahorro. Esa distinción está declarada en el dashboard, porque una herramienta que promete de más pierde credibilidad en la primera reunión.
+        </p>
+      </div>
+    </section>
+
+    <!-- DATOS -->
+    <section>
+      <div class="section-label">Fuentes de datos</div>
+      <h2>Trece índices, dos fuentes públicas</h2>
+
+      <p>
+        La combinación es deliberada: <strong>índices internacionales</strong> para capturar la tendencia global de la materia prima, e <strong>indicadores locales</strong> para el efecto país sobre contratos indexados o en dólares.
+      </p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Serie</th><th>Indicador</th><th>Aplicación en compras</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>WPU0911</td><td>Pulpa y papel</td><td>Bolsas, papel, impresos</td></tr>
+          <tr><td>WPU091303</td><td>Cartón corrugado</td><td>Cajas, packaging secundario</td></tr>
+          <tr><td>WPU072</td><td>Resinas plásticas</td><td>Envases PET, film</td></tr>
+          <tr><td>WPU101</td><td>Hierro y acero</td><td>Estructuras, MRO, repuestos</td></tr>
+          <tr><td>WPU10250105</td><td>Aluminio</td><td>Latas, perfilería</td></tr>
+          <tr><td>WPU081</td><td>Madera aserrada</td><td>Pallets, embalaje</td></tr>
+          <tr><td>DCOILWTICO</td><td>Petróleo WTI</td><td>Fletes, energía, derivados</td></tr>
+          <tr><td>WPU057303</td><td>Diésel</td><td>Transporte, distribución</td></tr>
+          <tr><td>PCOPPUSDM</td><td>Cobre global</td><td>Cableado, eléctrico</td></tr>
+          <tr><td>dolar</td><td>Dólar observado</td><td>Contratos en USD</td></tr>
+          <tr><td>uf</td><td>UF</td><td>Contratos indexados en Chile</td></tr>
+          <tr><td>ipc</td><td>IPC Chile</td><td>Cláusulas de reajuste</td></tr>
+          <tr><td>libra_cobre</td><td>Libra de cobre</td><td>Referencia país</td></tr>
+        </tbody>
+      </table>
+
+      <p>
+        Los índices PPI provienen de Estados Unidos y no reflejan literalmente el mercado chileno. Reflejan la tendencia global de la materia prima, que es lo que mueve la estructura de costos de los proveedores locales. Por eso el dashboard incorpora además el dólar y la UF: la señal internacional del insumo más el efecto cambiario e inflacionario local.
+      </p>
+    </section>
+
+    <!-- ALCANCE -->
+    <section>
+      <div class="section-label">Alcance</div>
+      <h2>Qué hace el monitor</h2>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value">13</div>
+          <div class="metric-label">Índices monitoreados</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">36</div>
+          <div class="metric-label">Meses de historia</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">24h</div>
+          <div class="metric-label">Frecuencia de actualización</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value">$0</div>
+          <div class="metric-label">Costo de infraestructura</div>
+        </div>
+      </div>
+
+      <p>
+        El monitor no reemplaza el criterio del comprador ni automatiza la negociación. Hace algo más acotado y más útil: <strong>convierte una pregunta que nadie se estaba haciendo en una alerta priorizada</strong>. La decisión de abrir la conversación con el proveedor sigue siendo humana, pero ahora está informada por datos y respaldada por una curva que se puede mostrar en la reunión.
+      </p>
+    </section>
+
+    <!-- STACK -->
+    <section>
+      <div class="section-label">Stack técnico</div>
+      <h2>Tecnologías utilizadas</h2>
+      <div class="stack-grid">
+        <div class="stack-item">
+          <div class="stack-icon">⚙️</div>
+          <div>
+            <div class="stack-name">Google Apps Script</div>
+            <div class="stack-desc">Extracción y cálculo diario</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">📊</div>
+          <div>
+            <div class="stack-name">Looker Studio</div>
+            <div class="stack-desc">Visualización y alertas</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🗂️</div>
+          <div>
+            <div class="stack-name">Google Sheets</div>
+            <div class="stack-desc">Capa de datos</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🏛️</div>
+          <div>
+            <div class="stack-name">FRED API</div>
+            <div class="stack-desc">Índices PPI internacionales</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">🇨🇱</div>
+          <div>
+            <div class="stack-name">mindicador.cl</div>
+            <div class="stack-desc">Indicadores macro Chile</div>
+          </div>
+        </div>
+        <div class="stack-item">
+          <div class="stack-icon">⏱️</div>
+          <div>
+            <div class="stack-name">Triggers programados</div>
+            <div class="stack-desc">Ejecución sin intervención</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="sidebar-card">
+      <h3>Acceder</h3>
+      <a href="https://lookerstudio.google.com/reporting/768cb46f-e565-416a-a224-77bdd03f0b23" target="_blank" rel="noopener" class="sidebar-link">
+        📊 Dashboard completo <span>↗</span>
+      </a>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Ficha del proyecto</h3>
+      <ul class="sidebar-list">
+        <li><strong>Tipo</strong> Dashboard analítico</li>
+        <li><strong>Stack</strong> Apps Script · Looker</li>
+        <li><strong>Estado</strong> Publicado y en vivo</li>
+        <li><strong>Fuentes</strong> FRED · mindicador.cl</li>
+        <li><strong>Historia</strong> 36 meses</li>
+        <li><strong>Frecuencia</strong> Diaria, automática</li>
+      </ul>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Índices monitoreados</h3>
+      <ul class="idx-list">
+        <li>Pulpa y papel <span>PPI</span></li>
+        <li>Cartón corrugado <span>PPI</span></li>
+        <li>Resinas plásticas <span>PPI</span></li>
+        <li>Hierro y acero <span>PPI</span></li>
+        <li>Aluminio <span>PPI</span></li>
+        <li>Madera aserrada <span>PPI</span></li>
+        <li>Petróleo WTI <span>USD</span></li>
+        <li>Diésel <span>PPI</span></li>
+        <li>Cobre global <span>USD</span></li>
+        <li>Dólar observado <span>CLP</span></li>
+        <li>UF <span>CLP</span></li>
+        <li>IPC Chile <span>%</span></li>
+        <li>Libra de cobre <span>USD</span></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-card">
+      <h3>Otros proyectos</h3>
+      <a href="clasificador.html" class="sidebar-link">
+        🔍 Clasificador de Materiales <span>→</span>
+      </a>
+      <a href="procurement-strategy.html" class="sidebar-link">
+        📐 Selector de Estrategia <span>→</span>
+      </a>
+      <a href="procurement-suite.html" class="sidebar-link">
+        ⚡ Procurement Suite <span>→</span>
+      </a>
+    </div>
+  </aside>
+
+</div>
+
+</body>
+</html>
